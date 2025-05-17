@@ -10,8 +10,6 @@ x-common-service: &common-service
     nofile:
       soft: 65535
       hard: 65535
-  networks:
-    - backend
   extra_hosts:
     - "host.docker.internal:host-gateway"
 
@@ -44,6 +42,7 @@ x-common-env: &common-env
   SEARXNG_ENDPOINT: ${SEARXNG_ENDPOINT}
   SEARXNG_ENGINES: ${SEARXNG_ENGINES}
   SEARXNG_CATEGORIES: ${SEARXNG_CATEGORIES}
+  MAX_RAM: ${MAX_RAM}
 
 services:
   playwright-service:
@@ -57,8 +56,6 @@ services:
       PROXY_USERNAME: ${PROXY_USERNAME}
       PROXY_PASSWORD: ${PROXY_PASSWORD}
       BLOCK_MEDIA: ${BLOCK_MEDIA}
-    networks:
-      - backend
 
   api:
     <<: *common-service
@@ -82,8 +79,6 @@ services:
     image: redis:alpine
     # image: valkey/valkey:alpine
 
-    networks:
-      - backend
     command: redis-server --bind 0.0.0.0
   
   nuq-postgres:
@@ -92,11 +87,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-    networks:
-      - backend
     ports:
       - "5432:5432"
 
-networks:
-  backend:
-    driver: bridge
