@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "rules": [
+    {
+      "base": "main",
+      "upstream": "mendableai:main",
+      "mergeMethod": "rebase",
+      "mergeUnstable": false,
+      "assignees": [],
+      "reviewers": [],
+      "conflictReviewers": []
+    }
+  ],
+  "label": ":arrow_heading_down: pull",
+  "conflictLabel": "merge-conflict"
