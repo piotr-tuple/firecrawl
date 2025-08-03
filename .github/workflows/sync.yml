@@ -12,11 +12,12 @@ jobs:
         uses: actions/checkout@master
         with:
           fetch-depth: 10  # greater than the number of commits you made
+          token: ${{ secrets.WORKFLOW_TOKEN }}
       - run: echo "🖥️ Syncing repo with upsteram"
       - name: Rebase upstream and notify coolify
         run: |
           set -ex;
-          echo ${{ github.token }} | gh auth login --with-token;
+          echo ${{ secrets.WORKFLOW_TOKEN }} | gh auth login --with-token;
           UPSTREAM=$(gh api repos/:owner/:repo --jq .parent.full_name);
           if [ -z $UPSTREAM ]; then echo "Can't find upstream" >&2 && exit 1; fi;
           if [ ! $(echo $UPSTREAM | egrep '^(http|git@)') ]; then
@@ -35,7 +36,7 @@ jobs:
           if [ "$(git status | grep diverged)" ]; then
             echo "Pushing to origin"
             ORIGIN_URL=$(git remote get-url origin);
-            git remote set-url origin "${ORIGIN_URL/https:\/\//https:\/\/${{ github.token }}@}"
+            git remote set-url origin "${ORIGIN_URL/https:\/\//https:\/\/${{ secrets.WORKFLOW_TOKEN }}@}"
             git fetch origin $(git branch --show-current)
             git push origin $(git branch --show-current) --force-with-lease;
             curl "${{vars.COOLIFY_URL}}" -H "Authorization: Bearer ${{secrets.COOLIFY_TOKEN}}" -i --fail-with-body;
